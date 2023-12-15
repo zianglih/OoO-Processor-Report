@@ -154,7 +154,7 @@ DC_WAITING_CLEANING_RES is just a stage for post-execution cleaning up trigger a
 
 On a hit, the cache stays in DC_READY. On a miss that requires replacing an invalid or clean line, the cache does not need to write back anything so it jump to DC_WAITING_RD_ACK and walk further. On a miss that requires replacing a dirty line, the cache have to write back the dirty result first so it jumps to DC_WAITING_WB_RES.
 
-### Multiplier Design Choice
+### Multiplier
 
 We modified from the original pipelined multiplier and still need a way for signed multiplication. The approach we adopted is to do sign-extension at input time, extending all 32-bit input to 64 bits.
 
@@ -162,7 +162,13 @@ In this approach, it is closer to real-world multiplier that perform binary mult
 
 This approach may not be the optimal one as by sign extension a lot of compute throughput is on wasted bits.
 
-## Interesting Design Ideas
+### RS
+
+In our implementation, RS module is not in charge of select entries to output. Instead, it exposes all its entries to fu_manager, let fu_manager select what to issue and takes an feedback from fu_manager as an input.
+
+The motivation and benefit is this creates a clear segragation between the register renaming part and the execution part in the pipeline, which makes future encapsulation much easier.
+
+## High Level Design Guidlines
 
 ### Notion of "Sub-systems" and Encapsulation
 
