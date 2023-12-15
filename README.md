@@ -204,9 +204,24 @@ There are indeed some other possible optimizations on our wishlist that we do no
 
 ### RS Critical Path
 #### Behavior
+During synthesis, we found RS is our critical path and that the size of RS has very big impact to clock frequency.
 #### Reason
+The design of our issue & complete logic is inspired by purely following the behavior of the example from class: check RS entry line by line and examine whether there is an available FU that can take it, untill reaching a superscalar width.
+
+During implementation, the logic is majorly divided into two chunks, FU availability conclusion and RS entry scanning.
+
+The FU availability conclusion does not only involve checking FU status itself, but also requires information about whether CDB can complete its result so that the FU can proceed to accept a new input this cycle or it has to stall and hold the value, which is basically the complete selection logic.
+
+The RS entry scanning part use the info concluded and examine each RS entry. The two parts cannot be done in parallel so their time accumulate on the critical path.
+
+Furthermore, as we have to detect whether a certain instruction need to be rollbacked, such rollback detection and cacellation logic is spread across many differen places making the combinational logic even more complicated.
 #### Implemented Solution
 #### Future Optimization
+There are indeed some other possible optimizations on our wishlist that we do not have time for implementing:
+- An issue buffer
+  - Allow deeper pipeline, trade latency for throughput and clock
+  - Give a unified interface for rollback cancellation detection and trigerring
+- Use the provided parallel priority selector instead of huge for loops
 
 ### Multiplier Design Choice
 TODO for ziangli
