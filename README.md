@@ -166,13 +166,19 @@ Note as we have a notion of sub-systems, a lot of modules are actually hierarchi
 The integrate test is done by running provided test programs on the assembled pipeline.
 ## Debugging Adventure
 ### Tools
+TODO for yzh
 ### Functionality Debugging
 ### Synthesis Debugging
 ### Interesting Bugs
+TODO for everyone
+
 - Index Overflow
-- Overseen Invalid BP Checking
-- Overseen On-Flight Rollback Cancellation
+  - depends on use case ```[$clog2(`N)-1:0]``` may not be enough
+- Overlooking Invalid BP Checking
+- Overlooking On-Flight Rollback Cancellation
+  - Pipelined FUs, RS
 - D-Cache Robbing I-Cache's Mem Request
+  - Be careful with aggresive d-cache forwarding
 - Register Zero Forwarding/Ready Bit/Valid Bit/...
 - Load Store Queue Rollback entry with in-flight dcache request 
 
@@ -180,12 +186,28 @@ The integrate test is done by running provided test programs on the assembled pi
 We should have done benchmarking for each of the following but we do not have time as only five people actually work in out team.
 
 For each point, cover reason-effect-optimization
-### ILP Roofline
-TODO for ziangli
+### Sigle Width Rollback as a Bottleneck
+#### Behavior
+We find that on a mis-speculated branch, it takes many cycles to rollback. Furthermore, as the ILP increases, the CPI does not improve much and by manually tracing for some assembly test cases over half of the cycles are spent on rolling back.
+#### Benchmark
+TODO for hyw
+#### Reason
+The reason is superscalar speculative executaion but single-width rollback. Furthermore as the ILP window increases we are more likely to falsely execute. As a result the benefit from ILP is offset by the big penalty from mis-predict and rollback.
+#### Implemented Solution
+Our idea is straight forward, if the penaly for pursuing higher ILP is big then just trade ILP for something else, majorly a better clock frquency. To do that we performed finer tunning on the pipeline configuration and finalized a set up with 8 ROB entries, 4 RS entries, 2 superscalar width, 1 multiplier.
+#### Future Optimization
+There are indeed some other possible optimizations on our wishlist that we do not have time for implementing:
+
+- Superscalar Rollback
+- Checkpoint
+- Improved BP Avoiding Mis Predict
+
 ### RS Critical Path
-TODO for ziangli
-### Data Cache Design Choice and Tradeoff
-TODO for ziangli
+#### Behavior
+#### Reason
+#### Implemented Solution
+#### Future Optimization
+
 ### Multiplier Design Choice
 TODO for ziangli
 
