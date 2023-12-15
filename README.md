@@ -375,8 +375,8 @@ TODO for everyone
 | Name            | Credits                                                       | Comments                                                                                |
 | --------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | Ziang Li        | Whole FU Manager, Whole Data Cache, MMU, Performance Tweaking | Very high code quality                                                                  |
-| Zihao Ye        | Map Table, Dispatch, Regfile, Unit Test Bench                 | Very very very solid debugging                                                          |
-| Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch                        |                                                                                         |
+| Zihao Ye        | Pipeline, Dispatch, Regfile, visual debugger, Unit Test Bench, memory debugging                 | Very solid debugging, speeding up the whole project progress, main solver to Xueqing's broken modules                                                          |
+| Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch, frontend debugging                        | Main solver to Xueqing's broken modules, spend most time and work towards it                                                                                         |
 | Yuewen Hou      | Whole Frontend, BP, RS, Free List                             |                                                                                         |
 | Mingchun Zhuang | LSQ, I Buffer                                                 | Almost bug-free                                                                         |
-| Xueqing Wu      | Some module interface but discarded later                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
+| Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
