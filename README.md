@@ -73,13 +73,29 @@ As the main memory is single ported and that excessive d-cache requests may stal
 Higher associativity is generally a good thing to have as it increases hit rate effectively dispite higher clock period and power consumption. In our processor, we are aware that the d-cache is not on the critical path so it is reasonable to adopt technology that trade clock period for performance. Furthermore, as our d-cache is single ported and blocking, miss penalty is significant as it completely stall further loads and stores. Overall it's a very good deal to select a full associativity as we nearly sacrifice no loss for a better hit rate and CPI.
 
 ##### Semi-Random Eviction
-We use the lower bits of PC 
-#### Internal FSM Design
+We use ```request.PC[6:3] ^ request.add[7:4]``` as a semi random index for eviction. When there still exsits empty or invalid line, the empty or invalid line is preferred.
 
+##### Aggresive Internal Forwarding
+
+Some forwarding techniques include send memory request as soon as a miss happens within the same cycle, read and write on the new data as soon as it's first ready.
+
+Applying more aggresive internal forwarding trades latency for less cycles. Again as d-cache is not on critical path, by applying aggressive internal forwarding we are sacrificing nothing for less cycles.
+
+#### Internal FSM Design
+We define an internal FSM for structuring d-cache behavior:
+- DC_READY
+- DC_WAITING_WB_RES
+- DC_WAITING_RD_ACK
+- DC_WAITING_RD_RES
+- DC_WAITING_CLEANING_RES 
+
+DC_WAITING_CLEANING_RES is just a stage for post-execution cleaning up trigger and is not involved in normal walk-through.
+
+On a hit, the cache stays in DC_READY. On a miss that requires replacing an invalid or clean line, the cache does not need to write back anything so it jump to DC_WAITING_RD_ACK and walk further. On a miss that requires replacing a dirty line, the cache have to write back the dirty result first so it jumps to DC_WAITING_WB_RES. 
 
 ## Interesting Design Ideas
 
-### "Sub-systems"
+### Notion of "Sub-systems" and Encapsulation
 #### Motivation
 Modern processors, especially SoCs or chipset systems usually have the major functionalities encapsulated into standalone sub-modules. This creates many benefits, such as easier integration with other company's propriertary IPs, easier early-stage design, allowing separate verfication etc.
 #### Our Implementation
@@ -165,5 +181,6 @@ TODO for ziangli
 
 ## Social Impact
 TODO for ziangli
+
 ## Credit and Contribution
 
