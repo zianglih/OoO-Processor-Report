@@ -29,9 +29,7 @@ Group 17
   - LSQ
   - D cache
 
-## Advanced Feature
-
-### The Chart
+## Advanced Feature Chart
 
 | Advanced Features | Integrated in the final submission | Implemented and working but discarded | Partially Implemented and not integrated | Comment |
 | :---: | :---: | :---: | :---: | :---: |
@@ -42,18 +40,19 @@ Group 17
 |Fully Associative D-Cache|yes|||
 |Dual Ported D-Cache via Dual Cache Bank|||yes| All components but the race condition when two banks compete for mem are implemented. Ease debug burden.|
 |Dcache Writeback Trigger||yes|| Optional via macro. Not sure if this counts, but it works and it's interesting to do. |
+|Visual Debugger||||TODO for yzh|
 
-### Details
-#### N Way Superscalar
-#### LSQ
+## Implementation Details
+### N Way Superscalar
+### LSQ
 We implement a N-way intergrated load store queue with byte-level forwarding. 
-##### Initial Approach
+#### Initial Approach
 We initially implemented a LSQ with following features:
 1. issue check for load
 Only when all previous store are successfully issued with address, the incoming load issue request is responsed with issue_approved = 1
 2. non-blocking dispatch for load and store
 To minimize waiting time for memory operations, the size of LSQ is the same as ROB size. Therefore all dispatch requests from ROB are guarenteed non-blocking.
-##### Problems in Initial Approach
+#### Problems in Initial Approach
 1. Forwarding is rare
 When the size of ROB is 8 and N is 2, the forward success rate across all load request in most test cases are less than 5%
 2. byte-level forwarding in an intergrated LSQ is very costly
@@ -62,10 +61,21 @@ For each byte of the $i^{th}$ entry, there are i - 1 potential sources. Making t
 
 
 
-#### Early Branch Resolution
+### Early Branch Resolution
 TODO for cyx
-#### D-Cache
-TODO for ziangli
+### D-Cache
+We implemented a write-on-allocate, write-back, fully-associative data cache, that also supports a self clean up trigger.
+
+#### Design Choice
+##### Write-on-Allocate, Write-Back
+As the main memory is single ported and that excessive d-cache requests may stall i-cache requests, we want to minimize the total request times and improve bandwidth utilization. By a write-on-allocate and write-back policy we only have traffic on a miss and eviction.
+##### Fully Associativity
+Higher associativity is generally a good thing to have as it increases hit rate effectively dispite higher clock period and power consumption. In our processor, we are aware that the d-cache is not on the critical path so it is reasonable to adopt technology that trade clock period for performance. Furthermore, as our d-cache is single ported and blocking, miss penalty is significant as it completely stall further loads and stores. Overall it's a very good deal to select a full associativity as we nearly sacrifice no loss for a better hit rate and CPI.
+
+##### Semi-Random Eviction
+We use the lower bits of PC 
+#### Internal FSM Design
+
 
 ## Interesting Design Ideas
 
@@ -107,8 +117,27 @@ List of configurable parameter:
 
 Specifically, our implementation supports arbitrary complete number that could be different from N, which does not add much value in this project but provides high flexibility for tweaking the pipeline.
 ## Testing Methodology
-### "Progressive" Unit Test
+### Unit Test
+We have written separate module level test benches for the the following:
+- branch_predictor
+- dcache
+- decoder
+- fetch
+- free_list
+- fu_manager
+- icache
+- inst_buffer
+- lsq
+- map_table
+- mem_issue
+- mult
+- regfile
+- rob
+- rs
+
+Note as we have a notion of sub-systems, a lot of modules are actually hierarchical. We wrote test bench and debug such modules from bottom up.
 ### Integrate Test
+The integrate test is done by running provided test programs on the assembled pipeline.
 ## Debugging Adventure
 ### Tools
 ### Functionality Debugging
