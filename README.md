@@ -55,7 +55,22 @@ TODO for ziangli
 ## Interesting Design Ideas
 
 ### "Sub-systems"
-TODO for ziangli
+#### Motivation
+Modern processors, especially SoCs or chipset systems usually have the major functionalities encapsulated into standalone sub-modules. This creates many benefits, such as easier integration with other company's propriertary IPs, easier early-stage design, allowing separate verfication etc.
+#### Our Implementation
+In our design, we consider the idea of sub-system and encapsulation in the first place. We have three major sub-systems, exectution sub-system called "fu-manager" which manages issu, execution, and complete, data memory sub-system which is essentially LSQ wrapping around write-back d-cache, and a frontend.
+
+Structures supporting register renaming are not encapsulated as we want to preserve the characteristics of the R10K pipeline taught in class.
+#### Results
+Benefits:
+- Top level pipeline is more organized.
+- Sub-systems can each be fully tested before assembled to pipeline.
+- Smoother work distribution across team members.
+
+Drawbacks:
+- When different sub-systems interact with each other, severe errors may occur due to unclear assumptions.
+- Each sub-module is more complicated internally. When wanting to add support for a new feature on a developed sub-system, it's usaually hard to come up with a bug-free and elegant approach. We usually find ourselves making compromises just to make things work.
+
 ### Parameterization
 TODO for ziangli
 ## Testing Methodology
