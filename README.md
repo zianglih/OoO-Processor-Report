@@ -72,7 +72,25 @@ Drawbacks:
 - Each sub-module is more complicated internally. When wanting to add support for a new feature on a developed sub-system, it's usaually hard to come up with a bug-free and elegant approach. We usually find ourselves making compromises just to make things work.
 
 ### Parameterization
-TODO for ziangli
+#### Motivation
+From a very early stage in the project, we concluded that if we could parameterize everything, we would have much larger flexibility for performance tweaking in the end.
+#### Challenges
+Writing HDL code consists of for loops, counters, and feedbacks (though should be avoided) while still keeping its synthesziability is very challenging.
+#### Results
+List of configurable parameter:
+- ROB_SZ
+- RS_SZ
+- N
+- CDB_W
+- NUM_ALU
+- NUM_MULT
+- MULT_STAGES
+- REG_PORT
+- BHT_SZ
+- BTB_SZ
+- LSQ forward range
+
+Specifically, our implementation supports arbitrary complete number that could be different from N, which does not add much value in this project but provides high flexibility for tweaking the pipeline.
 ## Testing Methodology
 ### "Progressive" Unit Test
 ### Integrate Test
@@ -80,6 +98,12 @@ TODO for ziangli
 ### Tools
 ### Functionality Debugging
 ### Synthesis Debugging
+### Interesting Bugs
+- Index Overflow
+- Overseen Invalid BP Checking
+- Overseen On-Flight Rollback Cancellation
+- D-Cache Robbing I-Cache's Mem Request
+- Register Zero Forwarding/Ready Bit/Valid Bit/...
 
 ## Analysis
 We should have done benchmarking for each of the following but we do not have time as only five people actually work in out team.
