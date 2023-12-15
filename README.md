@@ -65,7 +65,7 @@ Our staged pipeline supports N-way superscalar in each stages:
   instruction than the branch currently being rollbacked. It also has replicated prediction for 
   next head position considering N-way superscalar feature.
   
-  ### LSQ
+### LSQ
 
 We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory system, which encapsulated DCache.
 
@@ -317,10 +317,6 @@ Sweep result on `mergesort.c`
 | 5.14 | 32       | 32      |
 | 4.29 | 16       | 16      |
 | 4.01 | 8        | 8       |
-
-
-
-TODO for hyw
 
 #### Reason
 
