@@ -20,7 +20,7 @@ Group 17
   - RS
   - Map table
   - Free list
-- "Forntend"
+- "Frontend"
   - TODO for hyw
 - "Execution sub-system"
   - Integer ALU
@@ -39,7 +39,6 @@ Group 17
 |                   LSQ                   |                yes                |                                      |                                          |                                                                                                          |
 |     LSQ Data Merging and Forwarding     |                                    |                  yes                  |                                          |                        Optional via macro. Turn off for making synthesis faster.                        |
 |         Early Branch Resolution         |                yes                |                                      |                                          |                Head retires older instructions, tail rollback one instruction per cycle                |
-|                                        |                                    |                                      |                                          |                                                                                                          |
 |        Fully Associative D-Cache        |                yes                |                                      |                                          |                                                                                                          |
 | Dual Ported D-Cache via Dual Cache Bank |                                    |                                      |                   yes                   | All components but the race condition when two banks compete for mem are implemented. Ease debug burden. |
 |        Dcache Writeback Trigger        |                                    |                  yes                  |                                          |          Optional via macro. Not sure if this counts, but it works and it's interesting to do.          |
@@ -156,11 +155,11 @@ On a hit, the cache stays in DC_READY. On a miss that requires replacing an inva
 
 ### Multiplier Design Choice
 
-#### Input Time Sign Extension
-
 We modified from the original pipelined multiplier and still need a way for signed multiplication. The approach we adopted is to do sign-extension at input time, extending all 32-bit input to 64 bits.
 
-#### Motivation
+In this approach, it is closer to real-world multiplier that perform binary multiplication and is more technically elegant.
+
+This approach may not be the optimal one as by sign extension a lot of compute throughput is on wasted bits.
 
 ## Interesting Design Ideas
 
@@ -255,6 +254,11 @@ TODO for yzh
 
 ### Synthesis Debugging
 
+TODO for whoever understands
+
+
+We also find the ```-xprop=tmerge``` flag helpful.
+
 ### Interesting Bugs
 
 TODO for everyone
@@ -332,7 +336,10 @@ There are indeed some other possible optimizations on our wishlist that we do no
 
 ## Social Impact
 
-TODO for ziangli
+The most special feature of our processor design is that we keep the notion of "sub-systems" and encapsulation in the first place, so the highest level pipeline is clean and organized and the sub-system modules are relatively indepent. The chip can be built in a "chipset"-like manner, which create several benefits to the commertialization process and the society.
+
+- Reduce waste in wafer in production. The sub-systems can be separately producted so we do not need a huge chip area in production time. This will reduce waste on edge and reduce defective rate. Furthermore, this will lead to lower-costs chips for human that use fewer resources in the production process.
+- The core register renaming logic can be selected as a base motherboard, while the execution and memory sub-systems could be assembled with customized configurations as add ons. This will create huge flexibility for different compute workload. For example an embedded device may configure a minimal execution sub-system to reduce power consumption. A data center could customize different configuration for different services, such as one with more multiplier for HPC workload and one with a more advanced memory sub-system for IO intensive service.
 
 ## Credit and Contribution
 
