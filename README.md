@@ -21,7 +21,10 @@ Group 17
   - Map table
   - Free list
 - "Frontend"
-  - TODO for hyw
+  - Instruction Buffer
+  - Branch Predictor
+  - Branch Target Buffer
+  - Instruction Cache
 - "Execution sub-system"
   - Integer ALU
   - Pipelined multiplier
