@@ -248,8 +248,11 @@ The integrate test is done by running provided test programs on the assembled pi
 ## Debugging Adventure
 
 ### Tools
+We initially used the `$display` inside our module to print out the suspect values. However the sigal in combinational logic is not stable,and the displaying scontent is also too huge for us to easily locate the buggy time and place,  making the debugging process time-comsuming and sometimes went wrong by wasting time on the by-product of the real bug source.
 
-TODO for yzh
+We then choose `verdi` as the primary debugging tool, it starts well by solving several "hard-to-detect" bugs which we couldn't find by displaying singals out. However, when instructions nunber grows, finding the exact time where the bug exposed becomes a real problem. Since `verdi` does not support a specific value search in one signal through time, we have to locate the approximate timeline of the bug, then using `verdi` to make inspection. More than that, when the buggy instruction has several layers of dependency, the backtracking becomes a real problem: one might easily get lost trying to backtrack the source resgiter value throughout the whole program.
+
+To solve this problem, we wrote a visual-debugger. It uses the `display` message from retire stage and merge them together since the retirement is in-order. Everyline of this input will contain `time`, `pc`, `dest_reg_idx` and `writeback value`, which corresponds to the `.wb` file generated from project 3. In this way we obtain the instruction flow and can easily use `diff` to get the first wrong line, which drastically improve our debugging speed. The source file of this program is stored in `unique.py` and `script.py`.
 
 ### Functionality Debugging
 
