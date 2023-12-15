@@ -230,4 +230,13 @@ TODO for ziangli
 TODO for ziangli
 
 ## Credit and Contribution
+TODO for everyone
 
+| Name | Credits | Comments |
+| --- | --- | --- |
+| Ziang Li | Whole FU Manager, Whole Data Cache, MMU, Performance Tweaking| Very high code quality |
+| Zihao Ye | Map Table, Dispatch, Regfile, Unit Test Bench | Very very very solid debugging |
+| Yuxiang Chen| ROB, Map Table, Dispatch, Early Branch |
+| Yuewen Hou | Whole Frontend, BP, RS, Free List |
+| Mingchun Zhuang | LSQ, I Buffer | Almost bug-free |
+| Xueqing Wu | Some module interface but discarded later | No working modules, innocent about any internal design, not cooperative, rarely show up |
