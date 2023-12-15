@@ -4,14 +4,14 @@
 
 Group 17
 
-|      name      | uniqname |
-| :-------------: | :------: |
-|    Ziang Li    | ziangli |
-|    Zihao Ye    | zihaoye |
-|  Yuxiang Chen  | alaricyx |
-|   Yuewen Hou   | isaachyw |
+| name            | uniqname |
+|:---------------:|:--------:|
+| Ziang Li        | ziangli  |
+| Zihao Ye        | zihaoye  |
+| Yuxiang Chen    | alaricyx |
+| Yuewen Hou      | isaachyw |
 | Mingchun Zhuang | mczhuang |
-|   Xueqing Wu   |  bradwu  |
+| Xueqing Wu      | bradwu   |
 
 ## Base Design
 
@@ -33,36 +33,39 @@ Group 17
 
 ## Advanced Feature Chart
 
-|            Advanced Features            | Integrated in the final submission | Implemented and working but discarded | Partially Implemented and not integrated |                                                 Comment                                                 |
-| :-------------------------------------: | :--------------------------------: | :-----------------------------------: | :--------------------------------------: | :------------------------------------------------------------------------------------------------------: |
-|            N way superscalar            |                yes                |                                      |                                          |                                                                                                          |
-|                   LSQ                   |                yes                |                                      |                                          |                                                                                                          |
-|     LSQ Data Merging and Forwarding     |                                    |                  yes                  |                                          |                        Optional via macro. Turn off for making synthesis faster.                        |
-|         Early Branch Resolution         |                yes                |                                      |                                          |                Head retires older instructions, tail rollback one instruction per cycle                |
-|        Fully Associative D-Cache        |                yes                |                                      |                                          |                                                                                                          |
-| Dual Ported D-Cache via Dual Cache Bank |                                    |                                      |                   yes                   | All components but the race condition when two banks compete for mem are implemented. Ease debug burden. |
-|        Dcache Writeback Trigger        |                                    |                  yes                  |                                          |          Optional via macro. Not sure if this counts, but it works and it's interesting to do.          |
-|             Visual Debugger             |                                    |                                      |                                          |                                               TODO for yzh                                               |
+| Advanced Features                       | Integrated in the final submission | Implemented and working but discarded | Partially Implemented and not integrated | Comment                                                                                                  |
+|:---------------------------------------:|:----------------------------------:|:-------------------------------------:|:----------------------------------------:|:--------------------------------------------------------------------------------------------------------:|
+| N way superscalar                       | yes                                |                                       |                                          |                                                                                                          |
+| LSQ                                     | yes                                |                                       |                                          |                                                                                                          |
+| LSQ Data Merging and Forwarding         |                                    | yes                                   |                                          | Optional via macro. Turn off for making synthesis faster.                                                |
+| Early Branch Resolution                 | yes                                |                                       |                                          | Head retires older instructions, tail rollback one instruction per cycle                                 |
+| Fully Associative D-Cache               | yes                                |                                       |                                          |                                                                                                          |
+| Dual Ported D-Cache via Dual Cache Bank |                                    |                                       | yes                                      | All components but the race condition when two banks compete for mem are implemented. Ease debug burden. |
+| Dcache Writeback Trigger                |                                    | yes                                   |                                          | Optional via macro. Not sure if this counts, but it works and it's interesting to do.                    |
+| Visual Debugger                         |                                    |                                       |                                          | TODO for yzh                                                                                             |
 
 ## Implementation Details
 
 ### N Way Superscalar
+
 Our staged pipeline supports N-way superscalar in each stages:
+
 + Fetch: We designed a N-port Icache to support N-way superscalar fetch bandwidth. 
 + Dispatch: We replicated N decoders and utilized N-wide bus to deliver fetched instructions
-to later stages of the pipeline. We also designed the map table to handle internal forwarding
-of new tags and old tags. The reversation station and reorder buffer implements N-wide interface
-for incoming instructions.
+  to later stages of the pipeline. We also designed the map table to handle internal forwarding
+  of new tags and old tags. The reversation station and reorder buffer implements N-wide interface
+  for incoming instructions.
 + Issue: We created a dedicated function unit mananger to issue at most N ready instructiosn from reservation
-station per cycle.
+  station per cycle.
 + Complete: We designed designated CDB broadcast channel to deliver ready bits and register value
-for the issue stage.
+  for the issue stage.
 + Retire: The reorder buffer attempts to retire at most N instructions per cycle. Considering
-the blocking behavior of the cache, the reorder buffer can at most retire one store per cycle.
-The reorder buffer needs to handle complex edge cases during retire such as it cannot retire younger
-instruction than the branch currently being rollbacked. It also has replicated prediction for 
-next head position considering N-way superscalar feature.
-### LSQ
+  the blocking behavior of the cache, the reorder buffer can at most retire one store per cycle.
+  The reorder buffer needs to handle complex edge cases during retire such as it cannot retire younger
+  instruction than the branch currently being rollbacked. It also has replicated prediction for 
+  next head position considering N-way superscalar feature.
+  
+  ### LSQ
 
 We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory system, which encapsulated DCache.
 
@@ -254,6 +257,7 @@ The integrate test is done by running provided test programs on the assembled pi
 ## Debugging Adventure
 
 ### Tools
+
 We initially used the `$display` inside our module to print out the suspect values. However the sigal in combinational logic is not stable,and the displaying scontent is also too huge for us to easily locate the buggy time and place,  making the debugging process time-comsuming and sometimes went wrong by wasting time on the by-product of the real bug source.
 
 We then choose `verdi` as the primary debugging tool, it starts well by solving several "hard-to-detect" bugs which we couldn't find by displaying singals out. However, when instructions nunber grows, finding the exact time where the bug exposed becomes a real problem. Since `verdi` does not support a specific value search in one signal through time, we have to locate the approximate timeline of the bug, then using `verdi` to make inspection. More than that, when the buggy instruction has several layers of dependency, the backtracking becomes a real problem: one might easily get lost trying to backtrack the source resgiter value throughout the whole program.
@@ -265,7 +269,6 @@ To solve this problem, we wrote a visual-debugger. It uses the `display` message
 ### Synthesis Debugging
 
 TODO for whoever understands
-
 
 We also find the ```-xprop=tmerge``` flag helpful.
 
@@ -296,6 +299,26 @@ For each point, cover reason-effect-optimization
 We find that on a mis-speculated branch, it takes many cycles to rollback. Furthermore, as the ILP increases, the CPI does not improve much and by manually tracing for some assembly test cases over half of the cycles are spent on rolling back.
 
 #### Benchmark
+
+Sweep result on `graph.c`
+
+| CPI  | ROB Size | RS Size |
+| ---- | -------- | ------- |
+| 5.48 | 64       | 64      |
+| 5.46 | 32       | 32      |
+| 5.29 | 16       | 16      |
+| 5.01 | 8        | 8       |
+
+Sweep result on `mergesort.c`
+
+| CPI  | ROB Size | RS Size |
+| ---- | -------- | ------- |
+| 5.61 | 64       | 64      |
+| 5.14 | 32       | 32      |
+| 4.29 | 16       | 16      |
+| 4.01 | 8        | 8       |
+
+
 
 TODO for hyw
 
@@ -358,8 +381,8 @@ TODO for everyone
 | Name            | Credits                                                       | Comments                                                                                |
 | --------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | Ziang Li        | Whole FU Manager, Whole Data Cache, MMU, Performance Tweaking | Very high code quality                                                                  |
-| Zihao Ye        | Map Table, Dispatch, Regfile, Unit Test Bench                 | Very very very solid debugging                                                          |
-| Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch                        |                                                                                         |
+| Zihao Ye        | Pipeline, Dispatch, Regfile, visual debugger, Unit Test Bench, memory debugging                 | Very solid debugging, speeding up the whole project progress, main solver to Xueqing's broken modules                                                          |
+| Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch, frontend debugging                        | Main solver to Xueqing's broken modules, spend most time and work towards it                                                                                         |
 | Yuewen Hou      | Whole Frontend, BP, RS, Free List                             |                                                                                         |
 | Mingchun Zhuang | LSQ, I Buffer                                                 | Almost bug-free                                                                         |
-| Xueqing Wu      | Some module interface but discarded later                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
+| Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
