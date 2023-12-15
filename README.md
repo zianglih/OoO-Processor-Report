@@ -103,6 +103,11 @@ DC_WAITING_CLEANING_RES is just a stage for post-execution cleaning up trigger a
 
 On a hit, the cache stays in DC_READY. On a miss that requires replacing an invalid or clean line, the cache does not need to write back anything so it jump to DC_WAITING_RD_ACK and walk further. On a miss that requires replacing a dirty line, the cache have to write back the dirty result first so it jumps to DC_WAITING_WB_RES. 
 
+### Multiplier Design Choice
+#### Input Time Sign Extension
+We modified from the original pipelined multiplier and still need a way for signed multiplication. The approach we adopted is to do sign-extension at input time, extending all 32-bit input to 64 bits.
+#### Motivation
+
 ## Interesting Design Ideas
 
 ### Notion of "Sub-systems" and Encapsulation
@@ -222,9 +227,6 @@ There are indeed some other possible optimizations on our wishlist that we do no
   - Allow deeper pipeline, trade latency for throughput and clock
   - Give a unified interface for rollback cancellation detection and trigerring
 - Use the provided parallel priority selector instead of huge for loops
-
-### Multiplier Design Choice
-TODO for ziangli
 
 ## Social Impact
 TODO for ziangli
