@@ -81,11 +81,11 @@ We initially implemented a LSQ with following features:
 1. Forwarding is rare
    When the size of ROB is 8 and N is 2, the forward success rate across all load request in most test cases are less than 5%
 2. byte-level forwarding in an intergrated LSQ is very costly
-   For each byte of the $i^{th}$ entry, there are $i - 1$ potential sources. Making the logic complexity grows quickly as N and ROB size grows.
+   For each byte of the $i^{th}$ entry, there are $i - 1$ potential sources. Taking into account that each entry contains at most 4 bytes, there are $4 \cdot (i - 1)$ potential sources in total. Making the logic complexity grows quickly as load store queue size grows.
 3. In-cycle issue approval response to FU manager is critical path
    In initial approach, the FU manager is required to wait for in-cycle issue approval from load store queue to proceed, which is our critical path.
 
-#### Fix in Final Version For Problems in Initial Approach
+#### Final Version with Fix For Problems in Initial Approach
 
 1. non-blocking load store request issue
    Accept load request even when there is not issued store before the requested load in load store queue. Now both load and store issue requests are non-blocking and guaranteed to successfully issued once given to load store queue. To accommodate this change, we moved the check to the logic where load store queue handles forwarding or dcache request to avoid potential issues with RAW hazard. After this change to decouple the original dependent logic, we are able to reduce clock period by 20%.
