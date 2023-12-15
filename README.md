@@ -46,7 +46,22 @@ Group 17
 ### Details
 #### N Way Superscalar
 #### LSQ
-TODO for MC
+We implement a N-way intergrated load store queue with byte-level forwarding. 
+##### Initial Approach
+We initially implemented a LSQ with following features:
+1. issue check for load
+Only when all previous store are successfully issued with address, the incoming load issue request is responsed with issue_approved = 1
+2. non-blocking dispatch for load and store
+To minimize waiting time for memory operations, the size of LSQ is the same as ROB size. Therefore all dispatch requests from ROB are guarenteed non-blocking.
+##### Problems in Initial Approach
+1. Forwarding is rare
+When the size of ROB is 8 and N is 2, the forward success rate across all load request in most test cases are less than 5%
+2. byte-level forwarding in an intergrated LSQ is very costly
+For each byte of the $i^{th}$ entry, there are i - 1 potential sources. Making the logic grows quickly as N and ROB size grows
+
+
+
+
 #### Early Branch Resolution
 TODO for cyx
 #### D-Cache
@@ -104,6 +119,7 @@ Specifically, our implementation supports arbitrary complete number that could b
 - Overseen On-Flight Rollback Cancellation
 - D-Cache Robbing I-Cache's Mem Request
 - Register Zero Forwarding/Ready Bit/Valid Bit/...
+- Load Store Queue Rollback entry with in-flight dcache request 
 
 ## Analysis
 We should have done benchmarking for each of the following but we do not have time as only five people actually work in out team.
