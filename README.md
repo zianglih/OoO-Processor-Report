@@ -65,7 +65,7 @@ instruction than the branch currently being rollbacked. It also has replicated p
 next head position considering N-way superscalar feature.
 ### LSQ
 
-We implement a N-way intergrated load store queue with byte-level forwarding.
+We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory system, which encapsulated DCache.
 
 #### Initial Approach
 
@@ -88,7 +88,7 @@ We initially implemented a LSQ with following features:
 #### Final Version with Fix For Problems in Initial Approach
 
 1. non-blocking load store request issue
-   Accept load request even when there is not issued store before the requested load in load store queue. Now both load and store issue requests are non-blocking and guaranteed to successfully issued once given to load store queue. To accommodate this change, we moved the check to the logic where load store queue handles forwarding or dcache request to avoid potential issues with RAW hazard. After this change to decouple the original dependent logic, we are able to reduce clock period by 20%.
+   In the final version, load store queue will accept load request even when there is not issued store before the requested load in the load store queue. Now both load and store issue requests are non-blocking and guaranteed to successfully issued once given to load store queue. To accommodate this change, we moved the check to the logic where load store queue handles forwarding or dcache request to avoid potential issues with RAW hazard. After this change to decouple the original dependent logic, we are able to reduce clock period by 20%.
 2. Disable forwarding
    In the final design if we enable the forwarding systhesis time will be long due to its complicated logic. Considering the rare hit rate of forwarding, we disable forwarding in the final version.
 
