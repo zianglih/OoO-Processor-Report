@@ -258,7 +258,8 @@ We have written separate module level test benches for the the following:
   - load issue dependency check: only issue memory request when all previous stores successfully issued with addresses
   - consecutive dispatch with simultaneous issue and retire
   - simultaneous rollback and retire
-  - 
+  - partial forwarded test:
+  e.g.: $1^{st}, 2^{nd}, 4^{th}$ bytes forwarded, $3^{rd}$ byte are required to load from memory
 - map_table
 - mem_issue
 - mult
