@@ -238,11 +238,16 @@ Specifically, our implementation supports arbitrary complete number that could b
 We have written separate module level test benches for the the following:
 
 - branch_predictor
-- dcache: basic cacheline read write test; comprehensive test along with LSQ; Stress test with huge memory inputs to test the evict functionality.
+- dcache
+  - basic cacheline read write test
+  - comprehensive test along with LSQ
+  - Stress test with huge memory inputs to test the evict functionality
 - decoder
 - fetch
 - free_list
-- fu_manager: comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N). We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
+- fu_manager
+  - comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
+  - We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
 - icache
 - inst_buffer
    - iterative sliding window test
