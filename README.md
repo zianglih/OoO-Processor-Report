@@ -227,7 +227,6 @@ List of configurable parameter(final configuration are list on the right hand si
 - REG_PORT_WIDTH=4
 - BHT_SZ=16
 - BTB_LINES=16
-- LSQ forward range=2
 
 Specifically, our implementation supports arbitrary complete number that could be different from N, which does not add much value in this project but provides high flexibility for tweaking the pipeline.
 
