@@ -77,7 +77,7 @@ We implemented a N-way intergrated load store queue with byte-level forwarding. 
 We initially implemented a LSQ with following features:
 
 1. issue check for load
-   Only when all previous store are successfully issued with address, the incoming load issue request is responsed with issue_approved = 1
+   Only when all previous stores in queue are successfully issued with address, the incoming load issue request is responsed with issue_approved = 1
 2. non-blocking dispatch for load and store
    To minimize waiting time for memory operations, the size of LSQ is the same as ROB size. Therefore all dispatch requests from ROB are guarenteed non-blocking.
 
@@ -93,7 +93,7 @@ We initially implemented a LSQ with following features:
 #### Final Version with Fix For Problems in Initial Approach
 
 1. non-blocking load store request issue
-   In the final version, load store queue will accept load request even when there is not issued store before the requested load in the load store queue. Now both load and store issue requests are non-blocking and guaranteed to successfully issued once given to load store queue. To accommodate this change, we moved the check to the logic where load store queue handles forwarding or dcache request to avoid potential issues with RAW hazard. After this change to decouple the original dependent logic, we are able to reduce clock period by 20%.
+   In the final version, load store queue will accept load request even when there is store without issued address before the requested load in the load store queue. Now both load and store issue requests are non-blocking and guaranteed to successfully issued once given to load store queue. To accommodate this change, we moved the check to the logic where load store queue handles forwarding or dcache request to avoid potential issues with RAW hazard. After this change to decouple the original dependent logic, we are able to reduce clock period by 20%.
 2. Restricted forward range in load store queue
    We observed that among the rare forwarding hit cases, most forwarding sources are at the very beginning of the queue head. To reduce the cost of queue wide forwarding, we add a configurable parameter to restrict the forward source range such that we could make trade-off between the logic complexity and overall performance.  To achieve dynamic forward range while maintaining correctness, we only allowed first $range\_forward$ entries as forward sources and issue memory request if the entries failed to forward and are within $range\_forward $ distance from the queue head. We ran the profiling under the final configuration parameter (ROB size: 8, N: 2). After profiling the outcome between different configuarations of forward range, we found that even with a very restricted forward range ($range\_forward  = n$), the hit rate change in most cases is within 10% and the impact on CPI is within 2%, which is completely acceptable considering that this change reduce 70% of the forward logic, where the forwarding logic takes up more than 30% of the total mutexes in the synthesis process.
 3. Disable forwarding
