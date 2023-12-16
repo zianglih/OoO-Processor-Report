@@ -260,6 +260,8 @@ We have written separate module level test benches for the the following:
   - simultaneous rollback and retire
   - partial forwarded test:
   e.g.: $1^{st}, 2^{nd}, 4^{th}$ bytes forwarded, $3^{rd}$ byte are required to load from memory
+  - store, clear then load: test end-to-end life cycle of data in memory
+  - fresh load from memory
 - map_table
 - mem_issue
 - mult
