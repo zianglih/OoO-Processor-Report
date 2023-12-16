@@ -45,7 +45,7 @@ Group 17
 | Fully Associative D-Cache               | yes                                |                                       |                                          |                                                                                                          |
 | Dual Ported D-Cache via Dual Cache Bank |                                    |                                       | yes                                      | All components but the race condition when two banks compete for mem are implemented. Ease debug burden. |
 | Dcache Writeback Trigger                |                                    | yes                                   |                                          | Optional via macro. Not sure if this counts, but it works and it's interesting to do.                    |
-| Visual Debugger                         |                                    |                                       |                                          | Need cooperative use of P3's wb file, could be included inside the `run.sh` file.                                                                                            |
+| Visual Debugger                         | yes                                |                                       |                                          | Need cooperative use of P3's wb file, could be included inside the `run.sh` file.                                                                                            |
 
 ## Implementation Details
 
