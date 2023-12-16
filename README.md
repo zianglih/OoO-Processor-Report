@@ -379,6 +379,7 @@ There are indeed some other possible optimizations on our wishlist that we do no
   - Allow deeper pipeline, trade latency for throughput and clock
   - Give a unified interface for rollback cancellation detection and trigerring
 - Use the provided parallel priority selector instead of huge for loops
+- Split Unified Load Store Queue to further reduce its size and thus the forward logic complexity
 
 ## Social Impact
 
@@ -397,7 +398,7 @@ TODO for everyone
 | Zihao Ye        | Pipeline, Dispatch, Regfile, visual debugger, Unit Test Bench, memory debugging                 | Very solid debugging, speeding up the whole project progress, main solver to Xueqing's broken modules                                                          |
 | Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch, frontend debugging                        | Main solver to Xueqing's broken modules, spend most time and work towards it                                                                                         |
 | Yuewen Hou      | Whole Frontend, BP, RS, Free List                             |                                                                                         |
-| Mingchun Zhuang | LSQ, I Buffer                                                 | Almost bug-free                                                                         |
+| Mingchun Zhuang | Load Store Queue, Instruction Buffer                                                 | Thorough unit tests covering extreme cases. Almost bug-free after intergated into pipelines                                                                        |
 | Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
 
 ## Corectness Summary
