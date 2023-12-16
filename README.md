@@ -246,7 +246,6 @@ We have written separate module level test benches for the the following:
   - comprehensive test along with LSQ
   - Stress test with huge memory inputs to test the evict functionality
 - dispatch
-- fetch
 - free_list
   - Check the correctness when retire and dispatch happen in same cycle
   - Test the behaviour when the free list is empty
