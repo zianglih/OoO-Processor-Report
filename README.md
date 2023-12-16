@@ -318,6 +318,8 @@ Sweep result on `mergesort.c`
 | 4.29 | 16       | 16      |
 | 4.01 | 8        | 8       |
 
+As shown above, inceasing ROB size and RS size which allows higher ILP leads to an even worse CPI, which is in align with our analysis.
+
 #### Reason
 
 The reason is superscalar speculative executaion but single-width rollback. Furthermore as the ILP window increases we are more likely to falsely execute. As a result the benefit from ILP is offset by the big penalty from mis-predict and rollback.
