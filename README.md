@@ -70,7 +70,7 @@ Our staged pipeline supports N-way superscalar in each stages:
   
 ### LSQ
 
-We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory system, which encapsulated DCache.
+We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory sub-system, which encapsulated DCache.
 
 #### Initial Approach
 
