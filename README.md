@@ -70,7 +70,7 @@ Our staged pipeline supports N-way superscalar in each stages:
 
 ### LSQ
 
-We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory system, which encapsulated DCache.
+We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory sub-system, which encapsulated DCache.
 
 #### Initial Approach
 
@@ -246,8 +246,8 @@ We have written separate module level test benches for the the following:
 - fetch
 - free_list
 - fu_manager
-  - comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
-  - We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
+  - Comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
+  - Also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ
 - icache
 - inst_buffer
   - iterative sliding window test
@@ -258,17 +258,20 @@ We have written separate module level test benches for the the following:
   - load issue dependency check: only issue memory request when all previous stores successfully issued with addresses
   - consecutive dispatch with simultaneous issue and retire
   - simultaneous rollback and retire
-  - 
-- map_table: Stress tested on new tag and old tag internal forwarding because of N-way superscalar.
-- mem_issue
-- mult: As a basic function unit wrote by us, we stress test it by inserting many different mult instructions to make sure this fully-pipelined mult module works properly.
-- regfile: Stress test on read requests, write requests and internal forwarding. We also test to expand the output gate to huge number (6 and 12).
-- ROB: 
+  - partial forwarded test:
+  e.g.: $1^{st}, 2^{nd}, 4^{th}$ bytes forwarded, $3^{rd}$ byte are required to load from memory
+  - store, clear then load: test end-to-end life cycle of data in memory
+  - fresh load from memory
+  - map_table: Stress tested on new tag and old tag internal forwarding because of N-way superscalar.
+  - mem_issue
+  - mult: As a basic function unit wrote by us, we stress test it by inserting many different mult instructions to make sure this fully-pipelined mult module works properly.
+  - regfile: Stress test on read requests, write requests and internal forwarding. We also test to expand the output gate to huge number (6 and 12).
+  - ROB: 
   - Stress test head tail moving logic. Since we support N-way superscalar, we unit tested multiple N to make sure it handles dispatching and retiring arbitrary N instructions.
   - Rollback logic is another challenge in updating head and tail pointers. We covered a lot of edge cases such as the branch to be rollbacked is on the tail pointer. We tested the broadcasting of the rollback messages through unit testing on each different kinds of instructions, especially predicted branch.
   - Retire logic is stress tested upon memory port limitation (can only retire one store each cycle); need to propagate retired memory operations to load store queue; need to set up barriers for branch incurring hazard.
-  - Complete to retire state transition logic is also unit tested since we support N-way superscalar feature.
-- rs
+  - Complete to retire state transition logic is also unit tested since we support N-way superscalar feature. 
+  - rs
 
 Note as we have a notion of sub-systems, a lot of modules are actually hierarchical. We wrote test bench and debug such modules from bottom up.
 
