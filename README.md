@@ -270,6 +270,20 @@ We then choose `verdi` as the primary debugging tool, it starts well by solving 
 To solve this problem, we wrote a visual-debugger. It uses the `display` message from retire stage and merge them together since the retirement is in-order. Everyline of this input will contain `time`, `pc`, `dest_reg_idx` and `writeback value`, which corresponds to the `.wb` file generated from project 3. In this way we obtain the instruction flow and can easily use `diff` to get the first wrong line, which drastically improve our debugging speed. The source file of this program is stored in `unique.py` and `script.py`.
 
 ### Functionality Debugging
+Now our debugging flow is highly condense and efficient. We recommend firstly use our visual debugger to generate the instructions flow and do the `diff` to find the timeline.
+
+We then choose to use `verdi` or the displaying content inside the `result.log` file. Since the the buggy instruction is found and the backtracking could be easily done, we can choose the rest debugging strategy according to the speculative type of the bug:
+- memory bug: `verdi` usually works better.
+- frontend bug: `display` might saves time.
+
+
+The `display` content should also be considered, here is what we includes:
+- `ROB CONTENT`
+- `RS CONTENT`
+- `RETIRED INST`
+- `FETCH RESULT`
+- `MEM BUS`
+- ...
 
 ### Synthesis Debugging
 
