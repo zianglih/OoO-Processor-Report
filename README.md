@@ -21,7 +21,10 @@ Group 17
   - Map table
   - Free list
 - "Frontend"
-  - TODO for hyw
+  - Instruction Buffer
+  - Branch Predictor
+  - Branch Target Buffer
+  - Instruction Cache
 - "Execution sub-system"
   - Integer ALU
   - Pipelined multiplier
@@ -42,7 +45,7 @@ Group 17
 | Fully Associative D-Cache               | yes                                |                                       |                                          |                                                                                                          |
 | Dual Ported D-Cache via Dual Cache Bank |                                    |                                       | yes                                      | All components but the race condition when two banks compete for mem are implemented. Ease debug burden. |
 | Dcache Writeback Trigger                |                                    | yes                                   |                                          | Optional via macro. Not sure if this counts, but it works and it's interesting to do.                    |
-| Visual Debugger                         |                                    |                                       |                                          | TODO for yzh                                                                                             |
+| Visual Debugger                         |                                    |                                       |                                          | Need cooperative use of P3's wb file, could be included inside the `run.sh` file.                                                                                            |
 
 ## Implementation Details
 
