@@ -270,6 +270,20 @@ We then choose `verdi` as the primary debugging tool, it starts well by solving 
 To solve this problem, we wrote a visual-debugger. It uses the `display` message from retire stage and merge them together since the retirement is in-order. Everyline of this input will contain `time`, `pc`, `dest_reg_idx` and `writeback value`, which corresponds to the `.wb` file generated from project 3. In this way we obtain the instruction flow and can easily use `diff` to get the first wrong line, which drastically improve our debugging speed. The source file of this program is stored in `unique.py` and `script.py`.
 
 ### Functionality Debugging
+Now our debugging flow is highly condense and efficient. We recommend firstly use our visual debugger to generate the instructions flow and do the `diff` to find the timeline.
+
+We then choose to use `verdi` or the displaying content inside the `result.log` file. Since the the buggy instruction is found and the backtracking could be easily done, we can choose the rest debugging strategy according to the speculative type of the bug:
+- memory bug: `verdi` usually works better.
+- frontend bug: `display` might saves time.
+
+
+The `display` content should also be considered, here is what we includes:
+- `ROB CONTENT`
+- `RS CONTENT`
+- `RETIRED INST`
+- `FETCH RESULT`
+- `MEM BUS`
+- ...
 
 ### Synthesis Debugging
 
@@ -294,8 +308,6 @@ TODO for everyone
 ## Analysis
 
 We should have done benchmarking for each of the following but we do not have time as only five people actually work in out team.
-
-For each point, cover reason-effect-optimization
 
 ### Sigle Width Rollback as a Bottleneck
 
@@ -359,8 +371,6 @@ The RS entry scanning part use the info concluded and examine each RS entry. The
 
 Furthermore, as we have to detect whether a certain instruction need to be rollbacked, such rollback detection and cacellation logic is spread across many differen places making the combinational logic even more complicated.
 
-#### Implemented Solution
-
 #### Future Optimization
 
 There are indeed some other possible optimizations on our wishlist that we do not have time for implementing:
@@ -389,3 +399,11 @@ TODO for everyone
 | Yuewen Hou      | Whole Frontend, BP, RS, Free List                             |                                                                                         |
 | Mingchun Zhuang | LSQ, I Buffer                                                 | Almost bug-free                                                                         |
 | Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
+
+## Corectness Summary
+
+| test | Simulation | Synthesis | CPI |
+| :---: | :---: | :---: | :---: |
+| mult_no_lsq | passed | passed |
+| rv32 | passed | passed |
+| alexnet.c |||
