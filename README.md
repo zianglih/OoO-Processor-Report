@@ -246,8 +246,8 @@ We have written separate module level test benches for the the following:
 - fetch
 - free_list
 - fu_manager
-  - comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
-  - We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
+  - Comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
+  - Also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ
 - icache
 - inst_buffer
    - iterative sliding window test
@@ -261,8 +261,11 @@ We have written separate module level test benches for the the following:
   - 
 - map_table
 - mem_issue
-- mult: As a basic function unit wrote by us, we stress test it by inserting many different mult instructions to make sure this fully-pipelined mult module works properly.
-- regfile: Stress test on read requests, write requests and internal forwarding. We also test to expand the output gate to huge number (6 and 12).
+- mult
+  - As a basic function unit wrote by us, we stress test it by inserting many different mult instructions to make sure this fully-pipelined mult module works properly
+- regfile
+  - Stress test on read requests, write requests and internal forwarding
+  - Also test to expand the output gate to huge number (6 and 12)
 - rob
 - rs
 
