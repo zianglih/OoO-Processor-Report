@@ -238,6 +238,9 @@ Specifically, our implementation supports arbitrary complete number that could b
 We have written separate module level test benches for the the following:
 
 - branch_predictor
+  - basic initialization for branch history table and branch target buffer
+  - correctly update the btb and branch history table
+  - Test the hit and miss of btb with different pc tag
 - dcache
   - basic cacheline read write test
   - comprehensive test along with LSQ
@@ -245,6 +248,8 @@ We have written separate module level test benches for the the following:
 - decoder
 - fetch
 - free_list
+  - Check the correctness when retire and dispatch happen in same cycle
+  - Test the behaviour when the free list is empty
 - fu_manager
   - Comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
   - Also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ
