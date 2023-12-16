@@ -304,6 +304,7 @@ TODO for everyone
   - Be careful with aggresive d-cache forwarding
 - Register Zero Forwarding/Ready Bit/Valid Bit/...
 - Load Store Queue Rollback entry with in-flight dcache request
+  It's possible that a load request in LSQ is rollback while LSQ is sending memory request for it. Therefore when LSQ received the response the LSQ entry of the index recorded when issuing memory request is no longer the original reqeust. Since it's required by D-Cache that LSQ must holds the request until received the response, LSQ must keeps holding the D-Cache request while internally marked the request as invalid such that the response could be safely discarded when received in the future.
 
 ## Analysis
 
