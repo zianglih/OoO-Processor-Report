@@ -238,11 +238,16 @@ Specifically, our implementation supports arbitrary complete number that could b
 We have written separate module level test benches for the the following:
 
 - branch_predictor
-- dcache: basic cacheline read write test; comprehensive test along with LSQ; Stress test with huge memory inputs to test the evict functionality.
+- dcache
+  - basic cacheline read write test
+  - comprehensive test along with LSQ
+  - Stress test with huge memory inputs to test the evict functionality
 - decoder
 - fetch
 - free_list
-- fu_manager: comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N). We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
+- fu_manager
+  - comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
+  - We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
 - icache
 - inst_buffer
    - iterative sliding window test
@@ -263,6 +268,11 @@ We have written separate module level test benches for the the following:
 - rs
 
 Note as we have a notion of sub-systems, a lot of modules are actually hierarchical. We wrote test bench and debug such modules from bottom up.
+
+### Hierarchy Test
+
+We test the module in hierarchy way before runing the integrate test to verify the interaction of closely coupled module and manually control when necessary. For example
+for the fetch stage, we test it with multiple combination (fake mem + icache + fetch unit, real mem + icache + fetch, real mem + icache + fetch + instruction buffer).
 
 ### Integrate Test
 
@@ -296,13 +306,12 @@ The `display` content should also be considered, here is what we includes:
 
 ### Synthesis Debugging
 
-TODO for whoever understands
+During systhesis, the pipeline may act differently than simulation. One of the example is that signal are not properly initalized then make the result to be undefined `x`.
+We find the ```-xprop=tmerge``` flag helpful because it can set all uninitalized signal to be `x` instead of `0`, such that the bug are caught in the simulation.
 
-We also find the ```-xprop=tmerge``` flag helpful.
+Meanwhile, we find that if two wire drive cyclicly it will stall the whole synthesised pipeline. These findings remind us to always picture the circuit of our pipeline.
 
 ### Interesting Bugs
-
-TODO for everyone
 
 - Index Overflow
   - depends on use case ``[$clog2(`N)-1:0]`` may not be enough
@@ -400,8 +409,6 @@ The most special feature of our processor design is that we keep the notion of "
 
 ## Credit and Contribution
 
-TODO for everyone
-
 | Name            | Credits                                                       | Comments                                                                                |
 | --------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | Ziang Li        | Whole FU Manager, Whole Data Cache, MMU, Performance Tweaking | Very high code quality                                                                  |
@@ -415,7 +422,7 @@ TODO for everyone
 
 | test | Simulation | Synthesis |
 | :---: | :---: | :---: |
-| mult_no_lsq | passed |  |
-| all rv32 | passed |  |
-| all .c other than alexnet | passed ||
+| mult_no_lsq | passed | passed |
+| all rv32 | passed |partial passed |
+| all .c other than alexnet | passed | partial passed |
 | alexnet.c | failed | failed |
