@@ -248,7 +248,7 @@ We have written separate module level test benches for the the following:
 - lsq
 - map_table
 - mem_issue
-- mult
+- mult: As a basic function unit wrote by us, we stress test it by inserting many different mult instructions to make sure this fully-pipelined mult module works properly.
 - regfile: Stress test on read requests, write requests and internal forwarding. We also test to expand the output gate to huge number (6 and 12).
 - rob
 - rs
