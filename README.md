@@ -252,7 +252,6 @@ We have written separate module level test benches for the the following:
 - fu_manager
   - Comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N)
   - Also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ
-- icache
 - inst_buffer
   - iterative sliding window test
   - stress test via filling up then swapping all instructions out 
@@ -275,7 +274,10 @@ We have written separate module level test benches for the the following:
   - Rollback logic is another challenge in updating head and tail pointers. We covered a lot of edge cases such as the branch to be rollbacked is on the tail pointer. We tested the broadcasting of the rollback messages through unit testing on each different kinds of instructions, especially predicted branch.
   - Retire logic is stress tested upon memory port limitation (can only retire one store each cycle); need to propagate retired memory operations to load store queue; need to set up barriers for branch incurring hazard.
   - Complete to retire state transition logic is also unit tested since we support N-way superscalar feature. 
-- rs
+- Reservation Station
+  - Test the instruction are sucessfully dispatched into RS w/o ready on operand
+  - Test the ready bit are correctly set when cdb broadcast
+  - Test the entries are cleared out when selected by function unit manager
 
 Note as we have a notion of sub-systems, a lot of modules are actually hierarchical. We wrote test bench and debug such modules from bottom up.
 
