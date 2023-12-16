@@ -238,18 +238,26 @@ Specifically, our implementation supports arbitrary complete number that could b
 We have written separate module level test benches for the the following:
 
 - branch_predictor
-- dcache
+- dcache: basic cacheline read write test; comprehensive test along with LSQ; Stress test with huge memory inputs to test the evict functionality.
 - decoder
 - fetch
 - free_list
-- fu_manager
+- fu_manager: comprehensive function unit operations (ALU, MULT, random function units number fomr 1-N). We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
 - icache
 - inst_buffer
-- lsq
+   - iterative sliding window test
+   - stress test via filling up then swapping all instructions out 
+- load_store_queue
+  - address overlap data forward test: 
+  e.g.: first byte forwarded from the first byte of A, second byte forwarded from the first byte of B
+  - load issue dependency check: only issue memory request when all previous stores successfully issued with addresses
+  - consecutive dispatch with simultaneous issue and retire
+  - simultaneous rollback and retire
+  - 
 - map_table
 - mem_issue
-- mult
-- regfile
+- mult: As a basic function unit wrote by us, we stress test it by inserting many different mult instructions to make sure this fully-pipelined mult module works properly.
+- regfile: Stress test on read requests, write requests and internal forwarding. We also test to expand the output gate to huge number (6 and 12).
 - rob
 - rs
 
@@ -405,7 +413,7 @@ TODO for everyone
 | Zihao Ye        | Pipeline, Dispatch, Regfile, visual debugger, Unit Test Bench, memory debugging                 | Very solid debugging, speeding up the whole project progress, main solver to Xueqing's broken modules                                                          |
 | Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch, frontend debugging                        | Main solver to Xueqing's broken modules, spend most time and work towards it                                                                                         |
 | Yuewen Hou      | Whole Frontend, BP, RS, Free List                             |                                                                                         |
-| Mingchun Zhuang | Load Store Queue, Memory Subsystem Interface, Instruction Buffer, Memory Debugging                                                 | Thorough unit tests covering extreme cases. Almost bug-free after intergated into the pipeline                                                                        |
+| Mingchun Zhuang | Load Store Queue, Memory Subsystem Interface, Instruction Buffer, RS, Memory Debugging                                                 | Thorough unit tests covering extreme cases. Almost bug-free after intergated into the pipeline                                                                        |
 | Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
 
 ## Corectness Summary
