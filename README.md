@@ -215,19 +215,19 @@ Writing HDL code consists of for loops, counters, and feedbacks (though should b
 
 #### Results
 
-List of configurable parameter:
+List of configurable parameter(final configuration are list on the right hand side):
 
-- ROB_SZ
-- RS_SZ
-- N
-- CDB_W
-- NUM_ALU
-- NUM_MULT
-- MULT_STAGES
-- REG_PORT
-- BHT_SZ
-- BTB_SZ
-- LSQ forward range
+- ROB_SZ=8
+- RS_SZ=4
+- N=2
+- CDB_W=2
+- NUM_ALU=2
+- NUM_MULT=1
+- MULT_STAGES=4
+- REG_PORT_WIDTH=4
+- BHT_SZ=16
+- BTB_LINES=16
+- LSQ forward range=2
 
 Specifically, our implementation supports arbitrary complete number that could be different from N, which does not add much value in this project but provides high flexibility for tweaking the pipeline.
 
