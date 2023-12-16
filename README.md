@@ -36,16 +36,16 @@ Group 17
 
 ## Advanced Feature Chart
 
-| Advanced Features                       | Integrated in the final submission | Implemented and working but discarded | Partially Implemented and not integrated | Comment                                                                                                  |
-|:---------------------------------------:|:----------------------------------:|:-------------------------------------:|:----------------------------------------:|:--------------------------------------------------------------------------------------------------------:|
-| N way superscalar                       | yes                                |                                       |                                          |                                                                                                          |
-| LSQ                                     | yes                                |                                       |                                          |            Unified LSQ with load dependency check                                                                                              |
-| LSQ Data Merging and Byte-level Forwarding         |                                    | yes                                   |                                          | Optional via macro. Turn off for making synthesis faster. Configurable Forward Range.                                               |
-| Early Branch Resolution                 | yes                                |                                       |                                          | Head retires older instructions, tail rollback one instruction per cycle                                 |
-| Fully Associative D-Cache               | yes                                |                                       |                                          |                                                                                                          |
-| Dual Ported D-Cache via Dual Cache Bank |                                    |                                       | yes                                      | All components but the race condition when two banks compete for mem are implemented. Ease debug burden. |
-| Dcache Writeback Trigger                |                                    | yes                                   |                                          | Optional via macro. Not sure if this counts, but it works and it's interesting to do.                    |
-| Visual Debugger                         | yes                                |                                       |                                          | Need cooperative use of P3's wb file, could be included inside the `run.sh` file.                                                                                            |
+| Advanced Features                          | Integrated in the final submission | Implemented and working but discarded | Partially Implemented and not integrated | Comment                                                                                                  |
+|:------------------------------------------:|:----------------------------------:|:-------------------------------------:|:----------------------------------------:|:--------------------------------------------------------------------------------------------------------:|
+| N way superscalar                          | yes                                |                                       |                                          |                                                                                                          |
+| LSQ                                        | yes                                |                                       |                                          | Unified LSQ with load dependency check                                                                   |
+| LSQ Data Merging and Byte-level Forwarding |                                    | yes                                   |                                          | Optional via macro. Turn off for making synthesis faster. Configurable Forward Range.                    |
+| Early Branch Resolution                    | yes                                |                                       |                                          | Head retires older instructions, tail rollback one instruction per cycle                                 |
+| Fully Associative D-Cache                  | yes                                |                                       |                                          |                                                                                                          |
+| Dual Ported D-Cache via Dual Cache Bank    |                                    |                                       | yes                                      | All components but the race condition when two banks compete for mem are implemented. Ease debug burden. |
+| Dcache Writeback Trigger                   |                                    | yes                                   |                                          | Optional via macro. Not sure if this counts, but it works and it's interesting to do.                    |
+| Visual Debugger                            | yes                                |                                       |                                          | Need cooperative use of P3's wb file, could be included inside the `run.sh` file.                        |
 
 ## Implementation Details
 
@@ -67,7 +67,7 @@ Our staged pipeline supports N-way superscalar in each stages:
   The reorder buffer needs to handle complex edge cases during retire such as it cannot retire younger
   instruction than the branch currently being rollbacked. It also has replicated prediction for 
   next head position considering N-way superscalar feature.
-  
+
 ### LSQ
 
 We implemented a N-way intergrated load store queue with byte-level forwarding. The load store queue is the single united interface for our memory system, which encapsulated DCache.
@@ -242,7 +242,7 @@ We have written separate module level test benches for the the following:
   - basic cacheline read write test
   - comprehensive test along with LSQ
   - Stress test with huge memory inputs to test the evict functionality
-- decoder
+- dispatch
 - fetch
 - free_list
 - fu_manager
@@ -250,20 +250,24 @@ We have written separate module level test benches for the the following:
   - We also test the issue, execute and complete logic resides inisde the fu_manager, using the output signal to inspect results sending to RS, ROB and LSQ.
 - icache
 - inst_buffer
-   - iterative sliding window test
-   - stress test via filling up then swapping all instructions out 
+  - iterative sliding window test
+  - stress test via filling up then swapping all instructions out 
 - load_store_queue
   - address overlap data forward test: 
-  e.g.: first byte forwarded from the first byte of A, second byte forwarded from the first byte of B
+    e.g.: first byte forwarded from the first byte of A, second byte forwarded from the first byte of B
   - load issue dependency check: only issue memory request when all previous stores successfully issued with addresses
   - consecutive dispatch with simultaneous issue and retire
   - simultaneous rollback and retire
   - 
-- map_table
+- map_table: Stress tested on new tag and old tag internal forwarding because of N-way superscalar.
 - mem_issue
 - mult: As a basic function unit wrote by us, we stress test it by inserting many different mult instructions to make sure this fully-pipelined mult module works properly.
 - regfile: Stress test on read requests, write requests and internal forwarding. We also test to expand the output gate to huge number (6 and 12).
-- rob
+- ROB: 
+  - Stress test head tail moving logic. Since we support N-way superscalar, we unit tested multiple N to make sure it handles dispatching and retiring arbitrary N instructions.
+  - Rollback logic is another challenge in updating head and tail pointers. We covered a lot of edge cases such as the branch to be rollbacked is on the tail pointer. We tested the broadcasting of the rollback messages through unit testing on each different kinds of instructions, especially predicted branch.
+  - Retire logic is stress tested upon memory port limitation (can only retire one store each cycle); need to propagate retired memory operations to load store queue; need to set up barriers for branch incurring hazard.
+  - Complete to retire state transition logic is also unit tested since we support N-way superscalar feature.
 - rs
 
 Note as we have a notion of sub-systems, a lot of modules are actually hierarchical. We wrote test bench and debug such modules from bottom up.
@@ -288,14 +292,16 @@ We then choose `verdi` as the primary debugging tool, it starts well by solving 
 To solve this problem, we wrote a visual-debugger. It uses the `display` message from retire stage and merge them together since the retirement is in-order. Everyline of this input will contain `time`, `pc`, `dest_reg_idx` and `writeback value`, which corresponds to the `.wb` file generated from project 3. In this way we obtain the instruction flow and can easily use `diff` to get the first wrong line, which drastically improve our debugging speed. The source file of this program is stored in `unique.py` and `script.py`.
 
 ### Functionality Debugging
+
 Now our debugging flow is highly condense and efficient. We recommend firstly use our visual debugger to generate the instructions flow and do the `diff` to find the timeline.
 
 We then choose to use `verdi` or the displaying content inside the `result.log` file. Since the the buggy instruction is found and the backtracking could be easily done, we can choose the rest debugging strategy according to the speculative type of the bug:
+
 - memory bug: `verdi` usually works better.
 - frontend bug: `display` might saves time.
 
-
 The `display` content should also be considered, here is what we includes:
+
 - `ROB CONTENT`
 - `RS CONTENT`
 - `RETIRED INST`
@@ -408,20 +414,20 @@ The most special feature of our processor design is that we keep the notion of "
 
 ## Credit and Contribution
 
-| Name            | Credits                                                       | Comments                                                                                |
-| --------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Ziang Li        | Whole FU Manager, Whole Data Cache, MMU, Performance Tweaking | Very high code quality                                                                  |
-| Zihao Ye        | Pipeline, Dispatch, Regfile, visual debugger, Unit Test Bench, memory debugging                 | Very solid debugging, speeding up the whole project progress, main solver to Xueqing's broken modules                                                          |
-| Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch, frontend debugging                        | Main solver to Xueqing's broken modules, spend most time and work towards it                                                                                         |
-| Yuewen Hou      | Whole Frontend, BP, RS, Free List                             |                                                                                         |
-| Mingchun Zhuang | Load Store Queue, Memory Subsystem Interface, Instruction Buffer, RS, Memory Debugging                                                 | Thorough unit tests covering extreme cases. Almost bug-free after intergated into the pipeline                                                                        |
-| Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile                     | No working modules, innocent about any internal design, not cooperative, rarely show up |
+| Name            | Credits                                                                                | Comments                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Ziang Li        | Whole FU Manager, Whole Data Cache, MMU, Performance Tweaking                          | Very high code quality                                                                                |
+| Zihao Ye        | Pipeline, Dispatch, Regfile, visual debugger, Unit Test Bench, memory debugging        | Very solid debugging, speeding up the whole project progress, main solver to Xueqing's broken modules |
+| Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch, frontend debugging                             | Main solver to Xueqing's broken modules, spend most time and work towards it                          |
+| Yuewen Hou      | Whole Frontend, BP, RS, Free List                                                      |                                                                                                       |
+| Mingchun Zhuang | Load Store Queue, Memory Subsystem Interface, Instruction Buffer, RS, Memory Debugging | Thorough unit tests covering extreme cases. Almost bug-free after intergated into the pipeline        |
+| Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile | No working modules, innocent about any internal design, not cooperative, rarely show up               |
 
 ## Corectness Summary
 
-| test | Simulation | Synthesis |
-| :---: | :---: | :---: |
-| mult_no_lsq | passed | passed |
-| all rv32 | passed |partial passed |
-| all .c other than alexnet | passed | partial passed |
-| alexnet.c | failed | failed |
+| test                      | Simulation | Synthesis      |
+|:-------------------------:|:----------:|:--------------:|
+| mult_no_lsq               | passed     | passed         |
+| all rv32                  | passed     | partial passed |
+| all .c other than alexnet | passed     | partial passed |
+| alexnet.c                 | failed     | failed         |
