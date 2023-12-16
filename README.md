@@ -402,8 +402,9 @@ TODO for everyone
 
 ## Corectness Summary
 
-| test | Simulation | Synthesis | CPI |
-| :---: | :---: | :---: | :---: |
-| mult_no_lsq | passed | passed |
-| rv32 | passed | passed |
-| alexnet.c |||
+| test | Simulation | Synthesis |
+| :---: | :---: | :---: |
+| mult_no_lsq | passed |  |
+| all rv32 | passed |  |
+| all .c other than alexnet | passed ||
+| alexnet.c | failed | failed |
