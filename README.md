@@ -312,8 +312,6 @@ Meanwhile, we find that if two wire drive cyclicly it will stall the whole synth
 
 ### Interesting Bugs
 
-TODO for everyone
-
 - Index Overflow
   - depends on use case ``[$clog2(`N)-1:0]`` may not be enough
 - Overlooking Invalid BP Checking
@@ -409,8 +407,6 @@ The most special feature of our processor design is that we keep the notion of "
 - The core register renaming logic can be selected as a base motherboard, while the execution and memory sub-systems could be assembled with customized configurations as add ons. This will create huge flexibility for different compute workload. For example an embedded device may configure a minimal execution sub-system to reduce power consumption. A data center could customize different configuration for different services, such as one with more multiplier for HPC workload and one with a more advanced memory sub-system for IO intensive service.
 
 ## Credit and Contribution
-
-TODO for everyone
 
 | Name            | Credits                                                       | Comments                                                                                |
 | --------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
