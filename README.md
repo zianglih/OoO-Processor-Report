@@ -80,7 +80,7 @@ We initially implemented a LSQ with following features:
 
 1. Forwarding is rare
    When the size of ROB is 8 and N is 2, the forward success rate across all load request in most test cases are less than 5%
-2. byte-level forwarding in an intergrated LSQ is very costly
+2. Byte-level forwarding in an intergrated LSQ is very costly
    For each byte of the $i^{th}$ entry, there are $i - 1$ potential sources. Taking into account that each entry contains at most 4 bytes, there are $4 \cdot (i - 1)$ potential sources in total. Making the logic complexity grows quickly as load store queue size grows.
 3. In-cycle issue approval response to FU manager is critical path
    In initial approach, the FU manager is required to wait for in-cycle issue approval from load store queue to proceed, which is our critical path.
@@ -89,8 +89,10 @@ We initially implemented a LSQ with following features:
 
 1. non-blocking load store request issue
    In the final version, load store queue will accept load request even when there is not issued store before the requested load in the load store queue. Now both load and store issue requests are non-blocking and guaranteed to successfully issued once given to load store queue. To accommodate this change, we moved the check to the logic where load store queue handles forwarding or dcache request to avoid potential issues with RAW hazard. After this change to decouple the original dependent logic, we are able to reduce clock period by 20%.
-2. Disable forwarding
-   In the final design if we enable the forwarding systhesis time will be long due to its complicated logic. Considering the rare hit rate of forwarding, we disable forwarding in the final version.
+2. Restricted forward range in load store queue
+   We observed that among the rare forwarding hit cases, most forwarding sources are at the very beginning of the queue head. To reduce the cost of queue wide forwarding, we add a configurable parameter to restrict the forward source range such that we could make trade-off between the logic complexity and overall performance.  To achieve dynamic forward range while maintaining correctness, we only allowed first $range\_forward$ entries as forward sources and issue memory request if the entries failed to forward and are within $range\_forward $ distance from the queue head. We ran the profiling under the final configuration parameter (ROB size: 8, N: 2). After profiling the outcome between different configuarations of forward range, we found that even with a very restricted forward range ($range\_forward  = n$), the hit rate change in most cases is within 10% and the impact on CPI is within 2%, which is completely acceptable considering that this change reduce 70% of the forward logic, where the forwarding logic takes up more than 30% of the total mutexes in the synthesis process.
+3. Disable forwarding
+   Since we implemented byte-level forwarding based on a unified load store queue, even with a great improvements in #2 that greatly reduced its logic complexity, it's still the most time consuming process in the system. In the final design if we enable the forwarding, systhesis time will be long due to its complicated logic. Considering the rare hit rate of forwarding and poor CPI improvements in many test cases, we disable forwarding in the final version.
 
 ### Early Branch Resolution
 
