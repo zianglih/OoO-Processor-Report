@@ -1,17 +1,4 @@
-# EECS470_Report
-
-## Group Info
-
-Group 17
-
-| name            | uniqname |
-|:---------------:|:--------:|
-| Ziang Li        | ziangli  |
-| Zihao Ye        | zihaoye  |
-| Yuxiang Chen    | alaricyx |
-| Yuewen Hou      | isaachyw |
-| Mingchun Zhuang | mczhuang |
-| Xueqing Wu      | bradwu   |
+# Report
 
 ## Base Design
 
@@ -429,7 +416,6 @@ The most special feature of our processor design is that we keep the notion of "
 | Yuxiang Chen    | ROB, Map Table, Dispatch, Early Branch, frontend debugging                             | Main solver to Xueqing's broken modules, spend most time and work towards it                          |
 | Yuewen Hou      | Whole Frontend, BP, RS, Free List                                                      |                                                                                                       |
 | Mingchun Zhuang | Load Store Queue, Memory Subsystem Interface, Instruction Buffer, RS, Memory Debugging | Thorough unit tests covering extreme cases. Almost bug-free after intergated into the pipeline        |
-| Xueqing Wu      | Some module interface but discarded later, decoder and maptable but can't even compile | No working modules, innocent about any internal design, not cooperative, rarely show up               |
 
 ## Corectness Summary
 
