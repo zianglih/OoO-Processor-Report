@@ -1,4 +1,4 @@
-# Report
+# OoO Processor Report
 
 ## Base Design
 
@@ -328,7 +328,7 @@ Meanwhile, we find that if two wire drive cyclicly it will stall the whole synth
 
 We should have done benchmarking for each of the following but we do not have time as only five people actually work in out team.
 
-### Sigle Width Rollback as a Bottleneck
+### Single Width Rollback as a Bottleneck
 
 #### Behavior
 
